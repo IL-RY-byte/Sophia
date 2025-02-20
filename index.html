@@ -20,7 +20,8 @@
             background: url('photo_2025-02-02_16-59-56.jpg') center/cover no-repeat;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end; /* Align to bottom */
+            padding-bottom: 50px; /* Space from bottom */
         }
         
         /* Overlay to make hearts more visible against background */
@@ -71,21 +72,25 @@
             text-align: center;
             width: 80%;
             max-width: 400px;
+            margin-bottom: 30px; /* Additional space from bottom */
+            cursor: pointer; /* Show that it's clickable */
         }
         
         .message {
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            font-size: 5vw; /* Smaller text */
+            font-size: 5vw;
             text-align: center;
             padding: 15px;
             background-color: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             width: 100%;
-            opacity: 0;
-            transform: scale(0.5);
-            animation: reveal 2s ease-in-out forwards;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .message:active {
+            transform: scale(0.95);
         }
         
         /* Media query for larger screens */
@@ -109,37 +114,13 @@
                 transform: rotate(45deg) translateY(-100vh) scale(0.5);
             }
         }
-        
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-        
-        @keyframes reveal {
-            0% {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .pulse {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="overlay"></div>
-        <div class="message-container">
-            <div class="message pulse">
+        <div class="message-container" id="messageContainer">
+            <div class="message" id="loveMessage">
                 Forever Yours ❤️
             </div>
         </div>
@@ -148,6 +129,36 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.querySelector('.container');
+            const messageElement = document.getElementById('loveMessage');
+            const messageContainer = document.getElementById('messageContainer');
+            
+            // Messages array
+            const messages = [
+                "Forever Yours ❤️",
+                "You Complete Me ❤️",
+                "My Heart Beats For You ❤️", 
+                "Love You Endlessly ❤️",
+                "Together Forever ❤️",
+                "My One And Only ❤️",
+                "You Are My Life ❤️"
+            ];
+            
+            let currentMessageIndex = 0;
+            
+            // Handle touch/click to change message
+            messageContainer.addEventListener('click', function() {
+                currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+                
+                // Simple animation effect
+                messageElement.style.opacity = "0";
+                setTimeout(() => {
+                    messageElement.textContent = messages[currentMessageIndex];
+                    messageElement.style.opacity = "1";
+                }, 300);
+            });
+            
+            // Set initial message
+            messageElement.textContent = messages[currentMessageIndex];
             
             // Detect mobile devices
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -217,31 +228,6 @@
             // Create hearts at appropriate interval
             const heartCreator = setInterval(createHeart, heartInterval);
             
-            // Create multiple messages that change every few seconds
-            const messages = [
-                "Forever Yours ❤️",
-                "You Complete Me ❤️",
-                "My Heart Beats For You ❤️", 
-                "Love You Endlessly ❤️",
-                "Together Forever ❤️"
-            ];
-            
-            const messageElement = document.querySelector('.message');
-            let currentMessage = 0;
-            
-            // Change messages every 5 seconds
-            setInterval(() => {
-                messageElement.style.opacity = "0";
-                messageElement.style.transform = "scale(0.5)";
-                
-                setTimeout(() => {
-                    currentMessage = (currentMessage + 1) % messages.length;
-                    messageElement.textContent = messages[currentMessage];
-                    messageElement.style.opacity = "1";
-                    messageElement.style.transform = "scale(1)";
-                }, 1000);
-            }, 5000);
-            
             // Handle page visibility to conserve battery on mobile
             document.addEventListener('visibilitychange', function() {
                 if (document.hidden) {
@@ -251,6 +237,17 @@
                     setInterval(createHeart, heartInterval);
                 }
             });
+            
+            // Add touch hint (subtle pulsing) to show it's interactive
+            setTimeout(() => {
+                messageElement.style.transition = "transform 1s ease";
+                setInterval(() => {
+                    messageElement.style.transform = "scale(1.03)";
+                    setTimeout(() => {
+                        messageElement.style.transform = "scale(1)";
+                    }, 500);
+                }, 3000);
+            }, 2000);
         });
     </script>
 </body>
