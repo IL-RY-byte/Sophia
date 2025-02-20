@@ -17,35 +17,32 @@
             position: relative;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff758c, #ff7eb3);
-            background-size: 300% 300%;
-            animation: gradient 15s ease infinite;
+            background: url('photo_2025-02-02_16-59-56.jpg') center/cover no-repeat;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+        /* Overlay to make hearts more visible against background */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 2;
         }
         
         .heart {
             position: absolute;
             width: 20px;
             height: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 0, 0, 0.8);
             transform: rotate(45deg);
             animation: float 6s linear infinite;
             z-index: 5;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5));
         }
         
         .heart::before,
@@ -53,7 +50,7 @@
             content: '';
             width: 20px;
             height: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 0, 0, 0.8);
             border-radius: 50%;
             position: absolute;
         }
@@ -72,30 +69,29 @@
             position: relative;
             z-index: 10;
             text-align: center;
-            width: 85%;
-            max-width: 500px;
+            width: 80%;
+            max-width: 400px;
         }
         
         .message {
             color: white;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-            font-size: 8vw;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 5vw; /* Smaller text */
             text-align: center;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
             width: 100%;
             opacity: 0;
             transform: scale(0.5);
             animation: reveal 2s ease-in-out forwards;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
         }
         
         /* Media query for larger screens */
         @media (min-width: 768px) {
             .message {
-                font-size: 2.5rem;
+                font-size: 1.8rem;
             }
         }
         
@@ -137,36 +133,11 @@
         .pulse {
             animation: pulse 1.5s ease-in-out infinite;
         }
-        
-        /* Stars in background */
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        
-        .star {
-            position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-            opacity: 0.7;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% {
-                opacity: 0.7;
-            }
-            50% {
-                opacity: 0.3;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="stars"></div>
+        <div class="overlay"></div>
         <div class="message-container">
             <div class="message pulse">
                 Forever Yours ❤️
@@ -177,36 +148,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.querySelector('.container');
-            const starsContainer = document.querySelector('.stars');
             
             // Detect mobile devices
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const heartInterval = isMobile ? 500 : 300; // Less hearts on mobile for better performance
-            
-            // Create stars background
-            function createStars() {
-                const numStars = isMobile ? 50 : 100;
-                
-                for (let i = 0; i < numStars; i++) {
-                    const star = document.createElement('div');
-                    star.classList.add('star');
-                    
-                    const size = Math.random() * 3 + 1;
-                    star.style.width = `${size}px`;
-                    star.style.height = `${size}px`;
-                    
-                    // Random position
-                    star.style.left = `${Math.random() * 100}%`;
-                    star.style.top = `${Math.random() * 100}%`;
-                    
-                    // Random animation delay
-                    star.style.animationDelay = `${Math.random() * 3}s`;
-                    
-                    starsContainer.appendChild(star);
-                }
-            }
-            
-            createStars();
             
             // Create hearts periodically
             function createHeart() {
@@ -219,45 +164,44 @@
                 heart.style.bottom = '-20px';
                 
                 // Random size - smaller on mobile
-                const maxSize = isMobile ? 15 : 20;
-                const minSize = isMobile ? 8 : 10;
+                const maxSize = isMobile ? 12 : 15;
+                const minSize = isMobile ? 6 : 8;
                 const size = Math.random() * (maxSize - minSize) + minSize;
                 heart.style.width = `${size}px`;
                 heart.style.height = `${size}px`;
                 
                 // Random color
                 const colors = [
-                    'rgba(255, 255, 255, 0.8)',
-                    'rgba(255, 230, 240, 0.8)',
-                    'rgba(255, 200, 210, 0.8)',
-                    'rgba(255, 220, 220, 0.8)'
+                    'rgba(255, 0, 0, 0.8)',
+                    'rgba(255, 50, 100, 0.8)',
+                    'rgba(255, 100, 150, 0.8)',
+                    'rgba(255, 0, 50, 0.8)'
                 ];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 heart.style.backgroundColor = color;
                 
                 // Create style for this specific heart
                 const styleEl = document.createElement('style');
+                const heartId = `heart${Date.now()}`;
+                heart.id = heartId;
+                
                 styleEl.textContent = `
-                    #heart${Date.now()}::before, #heart${Date.now()}::after {
+                    #${heartId}::before, #${heartId}::after {
                         width: ${size}px;
                         height: ${size}px;
                         background-color: ${color};
                     }
-                    #heart${Date.now()}::before {
+                    #${heartId}::before {
                         top: -${size/2}px;
                     }
-                    #heart${Date.now()}::after {
+                    #${heartId}::after {
                         left: -${size/2}px;
                     }
                 `;
-                
-                // Unique ID
-                const heartId = `heart${Date.now()}`;
-                heart.id = heartId;
                 document.head.appendChild(styleEl);
                 
                 // Random animation duration
-                const duration = Math.random() * 6 + 3;
+                const duration = Math.random() * 6 + 4;
                 heart.style.animationDuration = `${duration}s`;
                 
                 // Add to container
@@ -277,11 +221,9 @@
             const messages = [
                 "Forever Yours ❤️",
                 "You Complete Me ❤️",
-                "My Heart Beats For You ❤️",
+                "My Heart Beats For You ❤️", 
                 "Love You Endlessly ❤️",
-                "Together Forever ❤️",
-                "Only You ❤️",
-                "My True Love ❤️"
+                "Together Forever ❤️"
             ];
             
             const messageElement = document.querySelector('.message');
