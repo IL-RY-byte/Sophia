@@ -39,17 +39,17 @@
     </div>
     <script>
         function createHearts() {
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 50; i++) {  // Збільшено кількість сердець
                 let heart = document.createElement('div');
                 heart.classList.add('heart');
                 document.body.appendChild(heart);
-                let x = Math.random() * window.innerWidth;
-                let y = window.innerHeight + Math.random() * 100;
+                let x = window.innerWidth / 2 + (Math.random() * 100 - 50); // Центруємо серця
+                let y = window.innerHeight - 100;
                 gsap.set(heart, { x, y, scale: Math.random() * 0.5 + 0.5 });
                 gsap.to(heart, { y: -50, opacity: 1, duration: Math.random() * 3 + 2, ease: 'power1.out', onComplete: () => heart.remove() });
             }
         }
-        setInterval(createHearts, 1000);
+        setInterval(createHearts, 500); // Збільшено частоту появи сердець
     </script>
 </body>
 </html>
