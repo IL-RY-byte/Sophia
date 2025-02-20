@@ -17,55 +17,86 @@
             position: relative;
             width: 100%;
             height: 100vh;
-            background: url('/api/placeholder/800/600') center/cover no-repeat;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b, #ff758c, #ff7eb3);
+            background-size: 300% 300%;
+            animation: gradient 15s ease infinite;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
         .heart {
             position: absolute;
-            width: 25px;
-            height: 25px;
-            background-color: rgba(255, 0, 0, 0.6);
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
             transform: rotate(45deg);
             animation: float 6s linear infinite;
+            z-index: 5;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
         }
         
         .heart::before,
         .heart::after {
             content: '';
-            width: 25px;
-            height: 25px;
-            background-color: rgba(255, 0, 0, 0.6);
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
             position: absolute;
         }
         
         .heart::before {
-            top: -12.5px;
+            top: -10px;
             left: 0;
         }
         
         .heart::after {
             top: 0;
-            left: -12.5px;
+            left: -10px;
+        }
+        
+        .message-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 85%;
+            max-width: 500px;
         }
         
         .message {
-            position: relative;
-            z-index: 10;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            font-size: 3rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            font-size: 8vw;
             text-align: center;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            max-width: 80%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            width: 100%;
             opacity: 0;
             transform: scale(0.5);
             animation: reveal 2s ease-in-out forwards;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Media query for larger screens */
+        @media (min-width: 768px) {
+            .message {
+                font-size: 2.5rem;
+            }
         }
         
         @keyframes float {
@@ -74,7 +105,7 @@
                 transform: rotate(45deg) translateY(0) scale(0.5);
             }
             20% {
-                opacity: 0.8;
+                opacity: 1;
                 transform: rotate(45deg) translateY(-20vh) scale(1);
             }
             100% {
@@ -88,7 +119,7 @@
                 transform: scale(1);
             }
             50% {
-                transform: scale(1.1);
+                transform: scale(1.05);
             }
         }
         
@@ -106,29 +137,76 @@
         .pulse {
             animation: pulse 1.5s ease-in-out infinite;
         }
+        
+        /* Stars in background */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="message pulse">
-            Forever Yours ❤️
+        <div class="stars"></div>
+        <div class="message-container">
+            <div class="message pulse">
+                Forever Yours ❤️
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.querySelector('.container');
+            const starsContainer = document.querySelector('.stars');
             
-            // Try to load the background image
-            const bgImage = new Image();
-            bgImage.onload = function() {
-                container.style.backgroundImage = `url(${this.src})`;
-            };
-            bgImage.onerror = function() {
-                console.error("Background image couldn't be loaded");
-                // Keep placeholder as fallback
-            };
-            bgImage.src = "https://github.com/IL-RY-byte/Sophia/blob/main/photo_2025-02-02_16-59-56.jpg";
+            // Detect mobile devices
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const heartInterval = isMobile ? 500 : 300; // Less hearts on mobile for better performance
+            
+            // Create stars background
+            function createStars() {
+                const numStars = isMobile ? 50 : 100;
+                
+                for (let i = 0; i < numStars; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    
+                    const size = Math.random() * 3 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    
+                    // Random position
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    
+                    // Random animation delay
+                    star.style.animationDelay = `${Math.random() * 3}s`;
+                    
+                    starsContainer.appendChild(star);
+                }
+            }
+            
+            createStars();
             
             // Create hearts periodically
             function createHeart() {
@@ -138,41 +216,49 @@
                 // Random position along the bottom
                 const leftPos = Math.random() * 100;
                 heart.style.left = `${leftPos}%`;
-                heart.style.bottom = '-25px';
+                heart.style.bottom = '-20px';
                 
-                // Random size
-                const size = Math.random() * 15 + 10;
+                // Random size - smaller on mobile
+                const maxSize = isMobile ? 15 : 20;
+                const minSize = isMobile ? 8 : 10;
+                const size = Math.random() * (maxSize - minSize) + minSize;
                 heart.style.width = `${size}px`;
                 heart.style.height = `${size}px`;
                 
-                // Adjust before and after pseudo-elements
-                document.styleSheets[0].insertRule(`
-                    .heart[style*="width: ${size}px"]::before,
-                    .heart[style*="width: ${size}px"]::after {
+                // Random color
+                const colors = [
+                    'rgba(255, 255, 255, 0.8)',
+                    'rgba(255, 230, 240, 0.8)',
+                    'rgba(255, 200, 210, 0.8)',
+                    'rgba(255, 220, 220, 0.8)'
+                ];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                heart.style.backgroundColor = color;
+                
+                // Create style for this specific heart
+                const styleEl = document.createElement('style');
+                styleEl.textContent = `
+                    #heart${Date.now()}::before, #heart${Date.now()}::after {
                         width: ${size}px;
                         height: ${size}px;
+                        background-color: ${color};
                     }
-                `, document.styleSheets[0].cssRules.length);
-                
-                document.styleSheets[0].insertRule(`
-                    .heart[style*="width: ${size}px"]::before {
+                    #heart${Date.now()}::before {
                         top: -${size/2}px;
                     }
-                `, document.styleSheets[0].cssRules.length);
-                
-                document.styleSheets[0].insertRule(`
-                    .heart[style*="width: ${size}px"]::after {
+                    #heart${Date.now()}::after {
                         left: -${size/2}px;
                     }
-                `, document.styleSheets[0].cssRules.length);
+                `;
+                
+                // Unique ID
+                const heartId = `heart${Date.now()}`;
+                heart.id = heartId;
+                document.head.appendChild(styleEl);
                 
                 // Random animation duration
                 const duration = Math.random() * 6 + 3;
                 heart.style.animationDuration = `${duration}s`;
-                
-                // Random opacity
-                const opacity = Math.random() * 0.4 + 0.4;
-                heart.style.backgroundColor = `rgba(255, 0, 0, ${opacity})`;
                 
                 // Add to container
                 container.appendChild(heart);
@@ -180,24 +266,28 @@
                 // Remove after animation completes
                 setTimeout(() => {
                     heart.remove();
+                    styleEl.remove();
                 }, duration * 1000);
             }
             
-            // Create hearts every 300ms
-            setInterval(createHeart, 300);
+            // Create hearts at appropriate interval
+            const heartCreator = setInterval(createHeart, heartInterval);
             
             // Create multiple messages that change every few seconds
             const messages = [
                 "Forever Yours ❤️",
-                "You Complete Me",
-                "My Heart Beats For You",
-                "Love You Endlessly",
-                "Together Forever"
+                "You Complete Me ❤️",
+                "My Heart Beats For You ❤️",
+                "Love You Endlessly ❤️",
+                "Together Forever ❤️",
+                "Only You ❤️",
+                "My True Love ❤️"
             ];
             
             const messageElement = document.querySelector('.message');
             let currentMessage = 0;
             
+            // Change messages every 5 seconds
             setInterval(() => {
                 messageElement.style.opacity = "0";
                 messageElement.style.transform = "scale(0.5)";
@@ -209,6 +299,16 @@
                     messageElement.style.transform = "scale(1)";
                 }, 1000);
             }, 5000);
+            
+            // Handle page visibility to conserve battery on mobile
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    clearInterval(heartCreator);
+                } else {
+                    // Resume heart creation when page is visible again
+                    setInterval(createHeart, heartInterval);
+                }
+            });
         });
     </script>
 </body>
