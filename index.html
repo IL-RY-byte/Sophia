@@ -3,53 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Romantic Starry Night</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <title>Romantic Hearts Animation</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b132b; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .scene {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
             position: relative;
-            width: 100vw;
+            width: 100%;
             height: 100vh;
-            background: url('https://raw.githubusercontent.com/IL-RY-byte/Sophia/main/photo_2025-02-02_16-59-56.jpg') no-repeat center/cover;
+            background: url('/api/placeholder/800/600') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .couple {
-            position: absolute;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 200px;
-            background: url('https://source.unsplash.com/200x300/?couple,silhouette') no-repeat center/contain;
-        }
+        
         .heart {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: red;
-            clip-path: polygon(50% 15%, 90% 0, 100% 35%, 50% 100%, 0 35%, 10% 0);
+            width: 25px;
+            height: 25px;
+            background-color: rgba(255, 0, 0, 0.6);
+            transform: rotate(45deg);
+            animation: float 6s linear infinite;
+        }
+        
+        .heart::before,
+        .heart::after {
+            content: '';
+            width: 25px;
+            height: 25px;
+            background-color: rgba(255, 0, 0, 0.6);
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart::before {
+            top: -12.5px;
+            left: 0;
+        }
+        
+        .heart::after {
+            top: 0;
+            left: -12.5px;
+        }
+        
+        .message {
+            position: relative;
+            z-index: 10;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 3rem;
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            max-width: 80%;
             opacity: 0;
+            transform: scale(0.5);
+            animation: reveal 2s ease-in-out forwards;
+        }
+        
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: rotate(45deg) translateY(0) scale(0.5);
+            }
+            20% {
+                opacity: 0.8;
+                transform: rotate(45deg) translateY(-20vh) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(45deg) translateY(-100vh) scale(0.5);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        @keyframes reveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="scene">
-        <div class="couple"></div>
+    <div class="container">
+        <div class="message pulse">
+            Forever Yours ❤️
+        </div>
     </div>
+
     <script>
-        function createHearts() {
-            for (let i = 0; i < 50; i++) {  // Збільшено кількість сердець
-                let heart = document.createElement('div');
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            
+            // Try to load the background image
+            const bgImage = new Image();
+            bgImage.onload = function() {
+                container.style.backgroundImage = `url(${this.src})`;
+            };
+            bgImage.onerror = function() {
+                console.error("Background image couldn't be loaded");
+                // Keep placeholder as fallback
+            };
+            bgImage.src = "https://github.com/IL-RY-byte/Sophia/blob/main/photo_2025-02-02_16-59-56.jpg";
+            
+            // Create hearts periodically
+            function createHeart() {
+                const heart = document.createElement('div');
                 heart.classList.add('heart');
-                document.body.appendChild(heart);
-                let x = window.innerWidth / 2 + (Math.random() * 100 - 50); // Центруємо серця
-                let y = window.innerHeight - 100;
-                gsap.set(heart, { x, y, scale: Math.random() * 0.5 + 0.5 });
-                gsap.to(heart, { y: -50, opacity: 1, duration: Math.random() * 3 + 2, ease: 'power1.out', onComplete: () => heart.remove() });
+                
+                // Random position along the bottom
+                const leftPos = Math.random() * 100;
+                heart.style.left = `${leftPos}%`;
+                heart.style.bottom = '-25px';
+                
+                // Random size
+                const size = Math.random() * 15 + 10;
+                heart.style.width = `${size}px`;
+                heart.style.height = `${size}px`;
+                
+                // Adjust before and after pseudo-elements
+                document.styleSheets[0].insertRule(`
+                    .heart[style*="width: ${size}px"]::before,
+                    .heart[style*="width: ${size}px"]::after {
+                        width: ${size}px;
+                        height: ${size}px;
+                    }
+                `, document.styleSheets[0].cssRules.length);
+                
+                document.styleSheets[0].insertRule(`
+                    .heart[style*="width: ${size}px"]::before {
+                        top: -${size/2}px;
+                    }
+                `, document.styleSheets[0].cssRules.length);
+                
+                document.styleSheets[0].insertRule(`
+                    .heart[style*="width: ${size}px"]::after {
+                        left: -${size/2}px;
+                    }
+                `, document.styleSheets[0].cssRules.length);
+                
+                // Random animation duration
+                const duration = Math.random() * 6 + 3;
+                heart.style.animationDuration = `${duration}s`;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.4 + 0.4;
+                heart.style.backgroundColor = `rgba(255, 0, 0, ${opacity})`;
+                
+                // Add to container
+                container.appendChild(heart);
+                
+                // Remove after animation completes
+                setTimeout(() => {
+                    heart.remove();
+                }, duration * 1000);
             }
-        }
-        setInterval(createHearts, 500); // Збільшено частоту появи сердець
+            
+            // Create hearts every 300ms
+            setInterval(createHeart, 300);
+            
+            // Create multiple messages that change every few seconds
+            const messages = [
+                "Forever Yours ❤️",
+                "You Complete Me",
+                "My Heart Beats For You",
+                "Love You Endlessly",
+                "Together Forever"
+            ];
+            
+            const messageElement = document.querySelector('.message');
+            let currentMessage = 0;
+            
+            setInterval(() => {
+                messageElement.style.opacity = "0";
+                messageElement.style.transform = "scale(0.5)";
+                
+                setTimeout(() => {
+                    currentMessage = (currentMessage + 1) % messages.length;
+                    messageElement.textContent = messages[currentMessage];
+                    messageElement.style.opacity = "1";
+                    messageElement.style.transform = "scale(1)";
+                }, 1000);
+            }, 5000);
+        });
     </script>
 </body>
 </html>
